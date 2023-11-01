@@ -17,14 +17,20 @@ go get github.com/optimus-hft/lockset
 ### Usage
 
 ```go
-package main
+package cmd
 
-import (
-	"github.com/optimus-hft/lockset"
-)
+import lockset "github.com/optimus-hft/lockset"
 
 func main() {
+	s := lockset.New()
 
+	s.Lock("lock1")
+	defer s.Unlock("lock1")
+
+	locked := s.TryLock("lock2")
+	if locked {
+		defer s.Unlock("lock2")
+	}
 }
 ```
 
