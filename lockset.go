@@ -4,6 +4,8 @@ import (
 	"sync"
 )
 
+type lockKey any
+
 type lock struct {
 	mu      sync.Mutex
 	counter uint
@@ -13,11 +15,11 @@ type lock struct {
 // Instead of protecting everything with a giant mutex, Different parts of code can be protected by a tiny mutex in isolation to provide more throughput and concurrency.
 type Set struct {
 	mu    sync.Mutex
-	locks map[string]*lock
+	locks map[lockKey]*lock
 }
 
 // Lock can be used to acquire a lock. If mutex is already locked, it will block the caller until mutex becomes unlocked.
-func (s *Set) Lock(name string) {
+func (s *Set) Lock(name lockKey) {
 	s.mu.Lock()
 	l, ok := s.locks[name]
 	if !ok {
@@ -31,7 +33,7 @@ func (s *Set) Lock(name string) {
 }
 
 // TryLock can be used to acquire a lock. If mutex is not locked, It will lock the mutex and returns true. If mutex is already locked, It will not block the caller and returns false.
-func (s *Set) TryLock(name string) bool {
+func (s *Set) TryLock(name lockKey) bool {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -49,7 +51,7 @@ func (s *Set) TryLock(name string) bool {
 }
 
 // Unlock can be used to unlock an already locked mutex. If mutex is not locked, Calling Unlock will panic.
-func (s *Set) Unlock(name string) {
+func (s *Set) Unlock(name lockKey) {
 	s.mu.Lock()
 	l, ok := s.locks[name]
 	if !ok {
@@ -67,6 +69,6 @@ func (s *Set) Unlock(name string) {
 // New creates a new lock set.
 func New() *Set {
 	return &Set{
-		locks: make(map[string]*lock),
+		locks: make(map[lockKey]*lock),
 	}
 }
