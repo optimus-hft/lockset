@@ -11,7 +11,7 @@ Instead of protecting everything with a giant mutex, Different parts of code can
 ## Getting Started
 ### Installation
 ```
-go get github.com/optimus-hft/lockset
+go get github.com/optimus-hft/lockset/v2
 ```
 
 ### Usage
@@ -27,9 +27,9 @@ func main() {
 	s.Lock("lock1")
 	defer s.Unlock("lock1")
 
-	locked := s.TryLock("lock2")
+	locked := s.TryLock(2)
 	if locked {
-		defer s.Unlock("lock2")
+		defer s.Unlock(2)
 	}
 }
 ```
