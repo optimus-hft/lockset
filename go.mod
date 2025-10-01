@@ -1,4 +1,4 @@
-module github.com/optimus-hft/lockset
+module github.com/optimus-hft/lockset/v2
 
 go 1.21
 
